@@ -10,6 +10,7 @@ export function Navigation({ activeTab, onTabChange }: NavigationProps) {
     { id: 'weld-touch-ups', label: 'Weld Touch Ups' },
     { id: 'locations', label: 'Locations' },
     { id: 'reasons', label: 'Reasons' },
+    { id: 'users', label: 'Users' },
   ];
 
   return (

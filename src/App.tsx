@@ -8,6 +8,7 @@ import { ToolMovesView } from './components/ToolMovesView';
 import { WeldTouchUpsView } from './components/WeldTouchUpsView';
 import { LocationsView } from './components/LocationsView';
 import { ReasonsView } from './components/ReasonsView';
+import { UsersView } from './components/UsersView';
 import { LogOut } from 'lucide-react';
 import type { Profile } from './types/domain';
 
@@ -93,6 +94,7 @@ function App() {
         {activeTab === 'weld-touch-ups' && <WeldTouchUpsView />}
         {activeTab === 'locations' && <LocationsView />}
         {activeTab === 'reasons' && <ReasonsView />}
+        {activeTab === 'users' && session?.user?.id && <UsersView currentUserId={session.user.id} />}
       </div>
     </div>
   );
