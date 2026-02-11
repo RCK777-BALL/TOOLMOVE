@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Filter, Wrench, Zap, ChevronDown } from 'lucide-react';
+import type { Department, Line } from '../types/domain';
 
 interface Activity {
   id: string;
@@ -13,6 +14,30 @@ interface Activity {
   created_at: string;
 }
 
+interface ToolMoveActivityRow {
+  id: string;
+  notes?: string | null;
+  moved_by: string;
+  created_at: string;
+  departments?: { name: string } | null;
+  lines?: { name: string } | null;
+  stations?: { name: string } | null;
+  reasons?: { name: string } | null;
+}
+
+interface WeldTouchupActivityRow {
+  id: string;
+  part_number: string;
+  weld_type: string;
+  reason: string;
+  notes?: string | null;
+  completed_by: string;
+  created_at: string;
+  departments?: { name: string } | null;
+  lines?: { name: string } | null;
+  stations?: { name: string } | null;
+}
+
 export function ActivityView() {
   const [activities, setActivities] = useState<Activity[]>([]);
   const [filteredActivities, setFilteredActivities] = useState<Activity[]>([]);
@@ -22,8 +47,8 @@ export function ActivityView() {
   const [lineFilter, setLineFilter] = useState('all');
   const [sortBy, setSortBy] = useState('date');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
-  const [departments, setDepartments] = useState<any[]>([]);
-  const [lines, setLines] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [lines, setLines] = useState<Line[]>([]);
 
   useEffect(() => {
     fetchActivities();
@@ -32,101 +57,6 @@ export function ActivityView() {
   }, []);
 
   useEffect(() => {
-    filterAndSortActivities();
-  }, [activities, activityType, departmentFilter, lineFilter, sortBy, sortOrder]);
-
-  const fetchDepartments = async () => {
-    const { data } = await supabase
-      .from('departments')
-      .select('id, name')
-      .eq('status', 'active')
-      .order('name');
-    setDepartments(data || []);
-  };
-
-  const fetchLines = async () => {
-    const { data } = await supabase
-      .from('lines')
-      .select('id, name')
-      .eq('status', 'active')
-      .order('name');
-    setLines(data || []);
-  };
-
-  const fetchActivities = async () => {
-    try {
-      const [toolMovesResult, weldTouchUpsResult] = await Promise.all([
-        supabase
-          .from('tool_moves')
-          .select(`
-            id,
-            notes,
-            moved_by,
-            created_at,
-            department_id,
-            line_id,
-            station_id,
-            departments(name),
-            lines(name),
-            stations(name),
-            reasons(name)
-          `)
-          .order('created_at', { ascending: false }),
-        supabase
-          .from('weld_touchups')
-          .select(`
-            id,
-            part_number,
-            weld_type,
-            reason,
-            notes,
-            completed_by,
-            created_at,
-            department_id,
-            line_id,
-            station_id,
-            departments(name),
-            lines(name),
-            stations(name)
-          `)
-          .order('created_at', { ascending: false }),
-      ]);
-
-      const toolMoves = (toolMovesResult.data || []).map((tm: any) => ({
-        id: tm.id,
-        type: 'tool_move' as const,
-        department: tm.departments?.name || '-',
-        line: tm.lines?.name || '-',
-        station: tm.stations?.name || '-',
-        description: `Reason: ${tm.reasons?.name || 'N/A'}\nNote: ${tm.notes || 'N/A'}`,
-        performed_by: tm.moved_by,
-        created_at: tm.created_at,
-      }));
-
-      const weldTouchUps = (weldTouchUpsResult.data || []).map((wt: any) => ({
-        id: wt.id,
-        type: 'weld_touchup' as const,
-        department: wt.departments?.name || '-',
-        line: wt.lines?.name || '-',
-        station: wt.stations?.name || '-',
-        description: `Part ${wt.part_number} - ${wt.weld_type}\nReason: ${wt.reason}\nNote: ${wt.notes || 'N/A'}`,
-        performed_by: wt.completed_by,
-        created_at: wt.created_at,
-      }));
-
-      const combined = [...toolMoves, ...weldTouchUps].sort(
-        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
-      );
-
-      setActivities(combined);
-    } catch (error) {
-      console.error('Error fetching activities:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const filterAndSortActivities = () => {
     let filtered = [...activities];
 
     if (activityType !== 'all') {
@@ -148,6 +78,94 @@ export function ActivityView() {
     });
 
     setFilteredActivities(filtered);
+  }, [activities, activityType, departmentFilter, lineFilter, sortBy, sortOrder]);
+
+  const fetchDepartments = async () => {
+    const { data } = await supabase
+      .from('departments')
+      .select('id, name')
+      .eq('status', 'active')
+      .order('name');
+    setDepartments((data as Department[]) || []);
+  };
+
+  const fetchLines = async () => {
+    const { data } = await supabase
+      .from('lines')
+      .select('id, name')
+      .eq('status', 'active')
+      .order('name');
+    setLines((data as Line[]) || []);
+  };
+
+  const fetchActivities = async () => {
+    try {
+      const [toolMovesResult, weldTouchUpsResult] = await Promise.all([
+        supabase
+          .from('tool_moves')
+          .select(`
+            id,
+            notes,
+            moved_by,
+            created_at,
+            departments(name),
+            lines(name),
+            stations(name),
+            reasons(name)
+          `)
+          .order('created_at', { ascending: false }),
+        supabase
+          .from('weld_touchups')
+          .select(`
+            id,
+            part_number,
+            weld_type,
+            reason,
+            notes,
+            completed_by,
+            created_at,
+            departments(name),
+            lines(name),
+            stations(name)
+          `)
+          .order('created_at', { ascending: false }),
+      ]);
+
+      const toolMoveRows = (toolMovesResult.data as ToolMoveActivityRow[] | null) || [];
+      const weldTouchupRows = (weldTouchUpsResult.data as WeldTouchupActivityRow[] | null) || [];
+
+      const toolMoves: Activity[] = toolMoveRows.map((tm) => ({
+        id: tm.id,
+        type: 'tool_move',
+        department: tm.departments?.name || '-',
+        line: tm.lines?.name || '-',
+        station: tm.stations?.name || '-',
+        description: `Reason: ${tm.reasons?.name || 'N/A'}\nNote: ${tm.notes || 'N/A'}`,
+        performed_by: tm.moved_by,
+        created_at: tm.created_at,
+      }));
+
+      const weldTouchUps: Activity[] = weldTouchupRows.map((wt) => ({
+        id: wt.id,
+        type: 'weld_touchup',
+        department: wt.departments?.name || '-',
+        line: wt.lines?.name || '-',
+        station: wt.stations?.name || '-',
+        description: `Part ${wt.part_number} - ${wt.weld_type}\nReason: ${wt.reason}\nNote: ${wt.notes || 'N/A'}`,
+        performed_by: wt.completed_by,
+        created_at: wt.created_at,
+      }));
+
+      const combined = [...toolMoves, ...weldTouchUps].sort(
+        (a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+
+      setActivities(combined);
+    } catch (error) {
+      console.error('Error fetching activities:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const formatDate = (dateString: string) => {
@@ -254,35 +272,19 @@ export function ActivityView() {
           <table className="w-full">
             <thead className="bg-gray-50 border-b border-gray-200">
               <tr>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Type
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Department
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Line
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Station
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Description
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Performed By
-                </th>
-                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Line</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Station</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Performed By</th>
+                <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {filteredActivities.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-8 text-center text-gray-500">
-                    No activities found
-                  </td>
+                  <td colSpan={7} className="px-4 py-8 text-center text-gray-500">No activities found</td>
                 </tr>
               ) : (
                 filteredActivities.map((activity) => (
@@ -305,13 +307,9 @@ export function ActivityView() {
                     <td className="px-4 py-4 text-sm text-gray-900">{activity.department}</td>
                     <td className="px-4 py-4 text-sm text-gray-900">{activity.line}</td>
                     <td className="px-4 py-4 text-sm text-gray-900">{activity.station}</td>
-                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-pre-line max-w-md">
-                      {activity.description}
-                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-700 whitespace-pre-line max-w-md">{activity.description}</td>
                     <td className="px-4 py-4 text-sm text-gray-900">{activity.performed_by}</td>
-                    <td className="px-4 py-4 text-sm text-gray-900 whitespace-nowrap">
-                      {formatDate(activity.created_at)}
-                    </td>
+                    <td className="px-4 py-4 text-sm text-gray-900 whitespace-nowrap">{formatDate(activity.created_at)}</td>
                   </tr>
                 ))
               )}

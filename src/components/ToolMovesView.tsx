@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, Eye } from 'lucide-react';
 import { AddToolMoveForm } from './AddToolMoveForm';
+import type { ToolMove } from '../types/domain';
 
 export function ToolMovesView() {
-  const [toolMoves, setToolMoves] = useState<any[]>([]);
+  const [toolMoves, setToolMoves] = useState<ToolMove[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedMove, setSelectedMove] = useState<any>(null);
+  const [selectedMove, setSelectedMove] = useState<ToolMove | null>(null);
 
   useEffect(() => {
     fetchToolMoves();

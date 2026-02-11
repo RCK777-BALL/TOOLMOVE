@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import type { Session } from '@supabase/supabase-js';
 import { supabase } from './lib/supabase';
 import { Auth } from './components/Auth';
 import { Navigation } from './components/Navigation';
@@ -8,12 +9,13 @@ import { WeldTouchUpsView } from './components/WeldTouchUpsView';
 import { LocationsView } from './components/LocationsView';
 import { ReasonsView } from './components/ReasonsView';
 import { LogOut } from 'lucide-react';
+import type { Profile } from './types/domain';
 
 function App() {
   const [activeTab, setActiveTab] = useState('activity');
-  const [session, setSession] = useState<any>(null);
+  const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any>(null);
+  const [userProfile, setUserProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -39,7 +41,7 @@ function App() {
   const fetchUserProfile = async (userId: string) => {
     const { data } = await supabase
       .from('profiles')
-      .select('*')
+      .select('id, email, full_name, role')
       .eq('id', userId)
       .maybeSingle();
     setUserProfile(data);

@@ -1,6 +1,7 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { X, Camera } from 'lucide-react';
+import { getErrorMessage } from '../lib/errors';
 
 interface QRScannerProps {
   onScan: (data: {
@@ -16,12 +17,21 @@ export function QRScanner({ onScan, onClose }: QRScannerProps) {
   const [error, setError] = useState<string | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const scannerRef = useRef<Html5Qrcode | null>(null);
-  const hasStartedRef = useRef(false);
+
+  const stopScanner = useCallback(async () => {
+    if (scannerRef.current && isScanning) {
+      try {
+        await scannerRef.current.stop();
+        scannerRef.current.clear();
+      } catch (err) {
+        console.error('Error stopping scanner:', err);
+      } finally {
+        setIsScanning(false);
+      }
+    }
+  }, [isScanning]);
 
   useEffect(() => {
-    if (hasStartedRef.current) return;
-    hasStartedRef.current = true;
-
     const startScanner = async () => {
       try {
         const scanner = new Html5Qrcode('qr-reader');
@@ -35,45 +45,42 @@ export function QRScanner({ onScan, onClose }: QRScannerProps) {
           },
           (decodedText) => {
             try {
-              const data = JSON.parse(decodedText);
+              const data = JSON.parse(decodedText) as {
+                department_id?: string;
+                line_id?: string;
+                station_id?: string;
+                note?: string;
+              };
+
               onScan({
                 departmentId: data.department_id,
                 lineId: data.line_id,
                 stationId: data.station_id,
                 note: data.note,
               });
-              stopScanner();
-            } catch (err) {
+
+              void stopScanner();
+            } catch {
               setError('Invalid QR code format. Expected JSON data.');
             }
           },
           () => {
+            // ignore per-frame scan miss callback
           }
         );
 
         setIsScanning(true);
-      } catch (err: any) {
-        setError(err.message || 'Failed to start camera');
+      } catch (err: unknown) {
+        setError(getErrorMessage(err));
       }
     };
 
-    startScanner();
+    void startScanner();
 
     return () => {
-      stopScanner();
+      void stopScanner();
     };
-  }, []);
-
-  const stopScanner = async () => {
-    if (scannerRef.current && isScanning) {
-      try {
-        await scannerRef.current.stop();
-        scannerRef.current.clear();
-      } catch (err) {
-        console.error('Error stopping scanner:', err);
-      }
-    }
-  };
+  }, [onScan, stopScanner]);
 
   const handleClose = async () => {
     await stopScanner();
@@ -88,27 +95,20 @@ export function QRScanner({ onScan, onClose }: QRScannerProps) {
             <Camera className="h-5 w-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">Scan QR Code</h3>
           </div>
-          <button
-            onClick={handleClose}
-            className="text-gray-400 hover:text-gray-600"
-          >
+          <button onClick={handleClose} className="text-gray-400 hover:text-gray-600">
             <X className="h-5 w-5" />
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-            {error}
-          </div>
+          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">{error}</div>
         )}
 
         <div className="mb-4">
           <div id="qr-reader" className="w-full rounded-lg overflow-hidden"></div>
         </div>
 
-        <p className="text-sm text-gray-600 text-center mb-4">
-          Position the QR code within the frame to scan
-        </p>
+        <p className="text-sm text-gray-600 text-center mb-4">Position the QR code within the frame to scan</p>
 
         <button
           onClick={handleClose}

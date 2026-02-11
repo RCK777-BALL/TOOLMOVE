@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { AlertCircle } from 'lucide-react';
+import type { Reason } from '../types/domain';
 
 export function ReasonsView() {
-  const [reasons, setReasons] = useState<any[]>([]);
+  const [reasons, setReasons] = useState<Reason[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -17,7 +18,7 @@ export function ReasonsView() {
         .select('*')
         .order('name');
 
-      setReasons(data || []);
+      setReasons((data as Reason[]) || []);
     } catch (error) {
       console.error('Error fetching reasons:', error);
     } finally {

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import { LogIn } from 'lucide-react';
+import { getErrorMessage } from '../lib/errors';
 
 interface AuthProps {
   onSuccess: () => void;
@@ -54,8 +55,8 @@ export function Auth({ onSuccess }: AuthProps) {
         if (error) throw error;
         onSuccess();
       }
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }

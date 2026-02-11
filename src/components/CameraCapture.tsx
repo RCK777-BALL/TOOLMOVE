@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Camera, X, FlipHorizontal } from 'lucide-react';
 
 interface CameraCaptureProps {
@@ -14,14 +14,14 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('environment');
   const [isCapturing, setIsCapturing] = useState(false);
 
-  useEffect(() => {
-    startCamera();
-    return () => {
-      stopCamera();
-    };
-  }, [facingMode]);
+  const stopCamera = useCallback(() => {
+    if (stream) {
+      stream.getTracks().forEach((track) => track.stop());
+      setStream(null);
+    }
+  }, [stream]);
 
-  const startCamera = async () => {
+  const startCamera = useCallback(async () => {
     try {
       setError(null);
       const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -34,21 +34,21 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
       if (videoRef.current) {
         videoRef.current.srcObject = mediaStream;
       }
-    } catch (err: any) {
+    } catch {
       setError('Unable to access camera. Please ensure camera permissions are granted.');
-      console.error('Camera error:', err);
     }
-  };
+  }, [facingMode]);
 
-  const stopCamera = () => {
-    if (stream) {
-      stream.getTracks().forEach(track => track.stop());
-    }
-  };
+  useEffect(() => {
+    void startCamera();
+    return () => {
+      stopCamera();
+    };
+  }, [startCamera, stopCamera]);
 
   const toggleCamera = () => {
     stopCamera();
-    setFacingMode(prev => prev === 'user' ? 'environment' : 'user');
+    setFacingMode((prev) => (prev === 'user' ? 'environment' : 'user'));
   };
 
   const capturePhoto = () => {
@@ -64,14 +64,18 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
       canvas.height = video.videoHeight;
       context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      canvas.toBlob((blob) => {
-        if (blob) {
-          const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
-          stopCamera();
-          onCapture(file);
-        }
-        setIsCapturing(false);
-      }, 'image/jpeg', 0.9);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            const file = new File([blob], `photo_${Date.now()}.jpg`, { type: 'image/jpeg' });
+            stopCamera();
+            onCapture(file);
+          }
+          setIsCapturing(false);
+        },
+        'image/jpeg',
+        0.9
+      );
     }
   };
 
@@ -93,19 +97,11 @@ export function CameraCapture({ onCapture, onCancel }: CameraCaptureProps) {
 
         <div className="p-4">
           {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
-              {error}
-            </div>
+            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">{error}</div>
           )}
 
           <div className="relative bg-black rounded-lg overflow-hidden" style={{ aspectRatio: '4/3' }}>
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-            />
+            <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
             <canvas ref={canvasRef} className="hidden" />
           </div>
 
