@@ -2,12 +2,13 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Plus, Eye } from 'lucide-react';
 import { AddWeldForm } from './AddWeldForm';
+import type { WeldTouchup } from '../types/domain';
 
 export function WeldTouchUpsView() {
-  const [weldTouchups, setWeldTouchups] = useState<any[]>([]);
+  const [weldTouchups, setWeldTouchups] = useState<WeldTouchup[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
-  const [selectedTouchup, setSelectedTouchup] = useState<any>(null);
+  const [selectedTouchup, setSelectedTouchup] = useState<WeldTouchup | null>(null);
 
   useEffect(() => {
     fetchWeldTouchups();

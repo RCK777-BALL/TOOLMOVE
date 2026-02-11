@@ -1,11 +1,12 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Building2, ChevronRight, Factory, MapPin } from 'lucide-react';
+import type { Department, Line, Station } from '../types/domain';
 
 export function LocationsView() {
-  const [departments, setDepartments] = useState<any[]>([]);
-  const [lines, setLines] = useState<any[]>([]);
-  const [stations, setStations] = useState<any[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [stations, setStations] = useState<Station[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {

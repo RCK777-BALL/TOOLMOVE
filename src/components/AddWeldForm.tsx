@@ -3,6 +3,8 @@ import { supabase } from '../lib/supabase';
 import { X, QrCode, Camera } from 'lucide-react';
 import { QRScanner } from './QRScanner';
 import { CameraCapture } from './CameraCapture';
+import { getErrorMessage } from '../lib/errors';
+import type { Department, Line, Reason, Station } from '../types/domain';
 
 interface AddWeldFormProps {
   onSuccess: () => void;
@@ -22,10 +24,10 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showScanner, setShowScanner] = useState(false);
-  const [reasons, setReasons] = useState<any[]>([]);
-  const [departments, setDepartments] = useState<any[]>([]);
-  const [lines, setLines] = useState<any[]>([]);
-  const [stations, setStations] = useState<any[]>([]);
+  const [reasons, setReasons] = useState<Reason[]>([]);
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [lines, setLines] = useState<Line[]>([]);
+  const [stations, setStations] = useState<Station[]>([]);
   const [photo, setPhoto] = useState<File | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [showCamera, setShowCamera] = useState(false);
@@ -196,8 +198,8 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
 
       if (error) throw error;
       onSuccess();
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(getErrorMessage(err));
     } finally {
       setLoading(false);
     }
