@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import { X, QrCode, Camera } from 'lucide-react';
+import { X, QrCode } from 'lucide-react';
 import { QRScanner } from './QRScanner';
-import { CameraCapture } from './CameraCapture';
 
 interface AddWeldFormProps {
   onSuccess: () => void;
@@ -26,9 +25,6 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
   const [departments, setDepartments] = useState<any[]>([]);
   const [lines, setLines] = useState<any[]>([]);
   const [stations, setStations] = useState<any[]>([]);
-  const [photo, setPhoto] = useState<File | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  const [showCamera, setShowCamera] = useState(false);
 
   useEffect(() => {
     fetchReasons();
@@ -113,70 +109,12 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
     setShowScanner(false);
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      if (file.size > 5242880) {
-        setError('Photo size must be less than 5MB');
-        return;
-      }
-      setPhoto(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPhotoPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleCameraCapture = (file: File) => {
-    setPhoto(file);
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setPhotoPreview(reader.result as string);
-    };
-    reader.readAsDataURL(file);
-    setShowCamera(false);
-  };
-
-  const uploadPhoto = async (userId: string): Promise<string | null> => {
-    if (!photo) return null;
-
-    try {
-      const fileExt = photo.name.split('.').pop();
-      const fileName = `${userId}/${Date.now()}.${fileExt}`;
-
-      const { error: uploadError } = await supabase.storage
-        .from('photos')
-        .upload(fileName, photo);
-
-      if (uploadError) throw uploadError;
-
-      const { data } = supabase.storage
-        .from('photos')
-        .getPublicUrl(fileName);
-
-      return data.publicUrl;
-    } catch (error) {
-      console.error('Error uploading photo:', error);
-      throw error;
-    }
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('User not authenticated');
-
-      let photoUrl = null;
-      if (photo) {
-        photoUrl = await uploadPhoto(user.id);
-      }
-
       const { error } = await supabase
         .from('weld_touchups')
         .insert([
@@ -190,7 +128,6 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
             notes,
             completed_by: completedBy,
             status,
-            photo_url: photoUrl,
           },
         ]);
 
@@ -225,13 +162,6 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
         <QRScanner
           onScan={handleQRScan}
           onClose={() => setShowScanner(false)}
-        />
-      )}
-
-      {showCamera && (
-        <CameraCapture
-          onCapture={handleCameraCapture}
-          onCancel={() => setShowCamera(false)}
         />
       )}
 
@@ -366,45 +296,6 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
             className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="Any additional notes or information"
           />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Photo (Optional)
-          </label>
-          <div className="flex items-center gap-3 flex-wrap">
-            <button
-              type="button"
-              onClick={() => setShowCamera(true)}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
-            >
-              <Camera className="h-4 w-4" />
-              <span>Take Photo</span>
-            </button>
-            <label className="flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200 cursor-pointer transition-colors text-sm">
-              <Camera className="h-4 w-4" />
-              <span>Choose Photo</span>
-              <input
-                type="file"
-                accept="image/jpeg,image/jpg,image/png,image/webp"
-                onChange={handlePhotoChange}
-                className="hidden"
-              />
-            </label>
-            {photo && (
-              <span className="text-sm text-gray-600">{photo.name}</span>
-            )}
-          </div>
-          {photoPreview && (
-            <div className="mt-3">
-              <img
-                src={photoPreview}
-                alt="Preview"
-                className="max-w-full h-48 object-contain border border-gray-300 rounded"
-              />
-            </div>
-          )}
-          <p className="text-xs text-gray-500 mt-1">Max size: 5MB. Formats: JPG, PNG, WebP</p>
         </div>
 
         <div>

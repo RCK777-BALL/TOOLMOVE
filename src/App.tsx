@@ -1,99 +1,44 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
-import { Auth } from './components/Auth';
-import { Navigation } from './components/Navigation';
-import { ActivityView } from './components/ActivityView';
-import { ToolMovesView } from './components/ToolMovesView';
-import { WeldTouchUpsView } from './components/WeldTouchUpsView';
-import { LocationsView } from './components/LocationsView';
-import { ReasonsView } from './components/ReasonsView';
-import { LogOut } from 'lucide-react';
+import { AuthForm } from './components/AuthForm';
+import { Dashboard } from './components/Dashboard';
+import type { User } from '@supabase/supabase-js';
 
 function App() {
-  const [activeTab, setActiveTab] = useState('activity');
-  const [session, setSession] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [userProfile, setUserProfile] = useState<any>(null);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session) {
-        fetchUserProfile(session.user.id);
-      }
+      setUser(session?.user ?? null);
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-      if (session) {
-        fetchUserProfile(session.user.id);
-      } else {
-        setUserProfile(null);
-      }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('profiles')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
-    setUserProfile(data);
-  };
-
-  const handleSignOut = async () => {
-    await supabase.auth.signOut();
-  };
-
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-        <div className="text-gray-600">Loading...</div>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p className="mt-4 text-gray-600">Loading...</p>
+        </div>
       </div>
     );
   }
 
-  if (!session) {
-    return <Auth onSuccess={() => {}} />;
+  if (!user) {
+    return <AuthForm />;
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50">
-      <header className="bg-white border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
-          <div className="flex justify-between items-center">
-            <h1 className="text-xl font-bold text-gray-900">Tool Move Tracking System</h1>
-            <div className="flex items-center gap-4">
-              <span className="text-sm text-gray-600">
-                {userProfile?.email || session.user.email}
-              </span>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 text-sm text-gray-600 hover:text-gray-900"
-              >
-                <LogOut className="h-4 w-4" />
-                Sign Out
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-4 py-6">
-        <Navigation activeTab={activeTab} onTabChange={setActiveTab} />
-
-        {activeTab === 'activity' && <ActivityView />}
-        {activeTab === 'tool-moves' && <ToolMovesView />}
-        {activeTab === 'weld-touch-ups' && <WeldTouchUpsView />}
-        {activeTab === 'locations' && <LocationsView />}
-        {activeTab === 'reasons' && <ReasonsView />}
-      </div>
-    </div>
-  );
+  return <Dashboard user={user} />;
 }
 
 export default App;
