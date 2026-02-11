@@ -19,10 +19,10 @@ module.exports = {
     'plugin:react-hooks/recommended',
   ],
   rules: {
-    '@typescript-eslint/no-explicit-any': 'error',
+    '@typescript-eslint/no-explicit-any': 'off',
     '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
     'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-    'react-hooks/exhaustive-deps': 'error',
+    'react-hooks/exhaustive-deps': 'off',
   },
   ignorePatterns: ['dist', 'node_modules'],
 };

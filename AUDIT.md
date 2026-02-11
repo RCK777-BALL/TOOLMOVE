@@ -88,13 +88,3 @@ This audit focused on the current front-end codebase in `/workspace/TOOLMOVE` an
 1. Implement code-splitting for the largest views and re-check bundle sizes.
 2. Add project-level domain types and reduce `any` usage.
 3. Enable automated dependency security scanning in CI.
-
-
-## Remediation Update (2026-02-11)
-
-The following previously identified incomplete items have now been completed:
-
-- Added and hardened lint configuration with strict `no-explicit-any` and hooks dependency enforcement.
-- Removed `any` usage from source components and forms via shared typed models.
-- Added shared error handling utility for unknown catch values.
-- Added `TASKS.md` to track completion status of remediation work.
