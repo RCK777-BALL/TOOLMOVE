@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from './lib/supabase';
 import { AuthForm } from './components/AuthForm';
-import { Dashboard } from './components/Dashboard';
+import { AppLayout } from './pages/AppLayout';
 import type { User } from '@supabase/supabase-js';
 
 function App() {
@@ -38,7 +38,7 @@ function App() {
     return <AuthForm />;
   }
 
-  return <Dashboard user={user} />;
+  return <AppLayout user={user} />;
 }
 
 export default App;
