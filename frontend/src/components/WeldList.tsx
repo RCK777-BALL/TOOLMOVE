@@ -28,7 +28,11 @@ interface ToolMoveWithWeld {
   station?: { name: string };
 }
 
-export function WeldList() {
+interface WeldListProps {
+  refresh?: number;
+}
+
+export function WeldList({ refresh = 0 }: WeldListProps) {
   const [welds, setWelds] = useState<WeldTouchup[]>([]);
   const [toolMoves, setToolMoves] = useState<ToolMoveWithWeld[]>([]);
   const [loading, setLoading] = useState(true);
@@ -37,7 +41,7 @@ export function WeldList() {
 
   useEffect(() => {
     fetchData();
-  }, []);
+  }, [refresh]);
 
   const fetchData = async () => {
     setLoading(true);
@@ -88,24 +92,44 @@ export function WeldList() {
     );
   }
 
-  if (welds.length === 0 && toolMoves.length === 0) {
-    return (
-      <div className="text-center py-12 bg-white rounded-lg shadow">
-        <p className="text-gray-600">No weld touchup records yet. Add your first record to get started!</p>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-6">
+      {/* Tool Moves requiring weld touch up */}
       {toolMoves.length > 0 && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="bg-orange-50 border-b border-orange-200 px-6 py-3">
+          <div className="bg-orange-50 border-b border-orange-200 px-4 sm:px-6 py-3">
             <h3 className="text-sm font-semibold text-orange-900">
               Tool Moves Requiring Weld Touch Up
             </h3>
           </div>
-          <table className="min-w-full divide-y divide-gray-200">
+
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y">
+            {toolMoves.map((move) => (
+              <div
+                key={move.id}
+                className="bg-orange-50 px-4 py-3 space-y-2"
+                onClick={() => setSelectedToolMove(move)}
+              >
+                <div className="flex justify-between text-sm font-semibold text-gray-900">
+                  <span>{move.reason?.name || '-'}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(move.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-700">
+                  {[move.department?.name, move.line?.name, move.station?.name].filter(Boolean).join(' / ') || '—'}
+                </div>
+                <div className="text-xs text-gray-700">
+                  {move.weld_touchup_notes || move.notes || 'No notes'}
+                </div>
+                <div className="text-xs text-gray-600">Moved by: {move.moved_by || '—'}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <table className="hidden sm:table min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -162,7 +186,7 @@ export function WeldList() {
                     {new Date(move.created_at).toLocaleDateString()}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                    <CheckCircle className="h-5 w-5 text-gray-400" title="Mark complete (pending API)" />
+                    <CheckCircle className="h-5 w-5 text-gray-400" />
                   </td>
                 </tr>
               ))}
@@ -171,14 +195,39 @@ export function WeldList() {
         </div>
       )}
 
+      {/* Weld touchup records */}
       {welds.length > 0 && (
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <div className="bg-gray-50 border-b border-gray-200 px-6 py-3">
+          <div className="bg-gray-50 border-b border-gray-200 px-4 sm:px-6 py-3">
             <h3 className="text-sm font-semibold text-gray-900">
               Weld Touch Up Records
             </h3>
           </div>
-          <table className="min-w-full divide-y divide-gray-200">
+
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y">
+            {welds.map((weld) => (
+              <div
+                key={weld.id}
+                className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+                onClick={() => setSelectedWeld(weld)}
+              >
+                <div className="flex justify-between text-sm font-semibold text-gray-900">
+                  <span>{weld.part_number}</span>
+                  <span className="text-xs text-gray-500">
+                    {new Date(weld.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-700 mt-1">Type: {weld.weld_type}</div>
+                <div className="text-xs text-gray-700">Reason: {weld.reason}</div>
+                <div className="text-xs text-gray-600">Completed By: {weld.completed_by || '—'}</div>
+                <div className="text-xs text-gray-600 capitalize">Status: {weld.status}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <table className="hidden sm:table min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

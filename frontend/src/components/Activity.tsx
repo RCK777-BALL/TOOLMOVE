@@ -281,7 +281,46 @@ export function Activity({ refresh }: ActivityProps) {
         </div>
       ) : (
         <div className="bg-white rounded-lg shadow overflow-hidden">
-          <table className="min-w-full divide-y divide-gray-200">
+          {/* Mobile cards */}
+          <div className="sm:hidden divide-y">
+            {filteredActivities.map((activity) => (
+              <div
+                key={`${activity.type}-${activity.id}`}
+                className="px-4 py-3 space-y-2 hover:bg-gray-50 cursor-pointer"
+                onClick={() => fetchActivityDetails(activity)}
+              >
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 text-sm font-semibold">
+                    {activity.type === 'tool_move' ? (
+                      <>
+                        <Package className="h-4 w-4 text-blue-600" />
+                        <span className="text-blue-700">Tool Move</span>
+                      </>
+                    ) : (
+                      <>
+                        <Wrench className="h-4 w-4 text-orange-600" />
+                        <span className="text-orange-700">Weld Touchup</span>
+                      </>
+                    )}
+                  </div>
+                  <span className="text-xs text-gray-500">
+                    {new Date(activity.date).toLocaleString()}
+                  </span>
+                </div>
+                <div className="text-xs text-gray-700">
+                  {[activity.departmentName, activity.lineName, activity.stationName].filter(Boolean).join(' / ') || '—'}
+                </div>
+                <div className="text-sm text-gray-900">{activity.description}</div>
+                {activity.notes && (
+                  <div className="text-xs text-gray-500">Note: {activity.notes}</div>
+                )}
+                <div className="text-xs text-gray-600">By: {activity.performedBy}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop table */}
+          <table className="hidden sm:table min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
                 <th

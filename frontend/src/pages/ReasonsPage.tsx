@@ -29,14 +29,14 @@ export function ReasonsPage({ refresh }: ReasonsPageProps = {}) {
             className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md transition-colors"
           >
             <RotateCcw className="h-4 w-4" />
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
           </button>
           <button
             onClick={() => setShowAddForm(!showAddForm)}
             className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
           >
             <Plus className="h-4 w-4" />
-            Add Reason
+            Add <span className="hidden sm:inline">Reason</span>
           </button>
         </div>
       </div>

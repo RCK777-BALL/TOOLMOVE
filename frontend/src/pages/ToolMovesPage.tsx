@@ -8,14 +8,8 @@ interface ToolMovesPageProps {
 }
 
 export function ToolMovesPage({ refresh }: ToolMovesPageProps = {}) {
-  const [showAddForm, setShowAddForm] = useState(false);
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
-
-  const handleAdded = () => {
-    setShowAddForm(false);
-    setRefreshKey(prev => prev + 1);
-  };
 
   return (
     <div className="space-y-4">
@@ -30,14 +24,14 @@ export function ToolMovesPage({ refresh }: ToolMovesPageProps = {}) {
             className="flex items-center gap-2 px-3 py-2 text-sm bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-md transition-colors"
           >
             <RotateCcw className="h-4 w-4" />
-            Refresh
+            <span className="hidden sm:inline">Refresh</span>
           </button>
           <button
             onClick={() => navigate('/tool-moves/add')}
             className="flex items-center gap-2 px-3 py-2 text-sm bg-blue-600 hover:bg-blue-700 text-white rounded-md transition-colors"
           >
             <Plus className="h-4 w-4" />
-            Add Tool Move
+            Add <span className="hidden sm:inline">Tool Move</span>
           </button>
         </div>
       </div>

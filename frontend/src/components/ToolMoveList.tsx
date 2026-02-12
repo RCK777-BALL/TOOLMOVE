@@ -90,7 +90,42 @@ export function ToolMoveList({ refresh }: ToolMoveListProps) {
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
+      {/* Mobile cards */}
+      <div className="sm:hidden divide-y">
+        {toolMoves.map((move) => (
+          <div
+            key={move.id}
+            className="px-4 py-3 hover:bg-gray-50 cursor-pointer"
+            onClick={() => setSelected(move)}
+          >
+            <div className="flex justify-between items-start">
+              <div className="text-sm font-semibold text-gray-900">
+                {move.reasons?.name || '-'}
+              </div>
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDelete(move.id);
+                }}
+                className="text-red-600 hover:text-red-900"
+                aria-label="Delete"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="text-xs text-gray-700 mt-1">
+              {[move.departments?.name, move.lines?.name, move.stations?.name].filter(Boolean).join(' / ') || '—'}
+            </div>
+            <div className="text-xs text-gray-700 mt-1">Moved by: {move.moved_by || '-'}</div>
+            <div className="text-xs text-gray-500 mt-1">
+              {new Date(move.created_at).toLocaleDateString()}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <table className="hidden sm:table min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

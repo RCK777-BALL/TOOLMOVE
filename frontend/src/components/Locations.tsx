@@ -132,7 +132,7 @@ export function Locations({ refresh }: LocationsProps) {
 
   return (
     <div className="space-y-4">
-      <div className="flex justify-between items-center">
+      {/* <div className="flex justify-between items-center">
         <button
           onClick={() => setShowAddDepartment(!showAddDepartment)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
@@ -140,7 +140,7 @@ export function Locations({ refresh }: LocationsProps) {
           <Plus className="h-5 w-5" />
           Add Department
         </button>
-      </div>
+      </div> */}
 
       {showAddDepartment && (
         <div className="bg-white rounded-lg shadow p-6">

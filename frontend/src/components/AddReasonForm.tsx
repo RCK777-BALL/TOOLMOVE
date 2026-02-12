@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import { supabase } from '../lib/supabase';
 import { X } from 'lucide-react';
+import { api } from '../lib/api';
 
 interface AddReasonFormProps {
   onSuccess: () => void;
@@ -20,17 +20,7 @@ export function AddReasonForm({ onSuccess, onCancel }: AddReasonFormProps) {
     setError(null);
 
     try {
-      const { error } = await supabase
-        .from('reasons')
-        .insert([
-          {
-            name,
-            description,
-            status,
-          },
-        ]);
-
-      if (error) throw error;
+      await api.createReason({ name, description, status });
       onSuccess();
     } catch (err: any) {
       setError(err.message);

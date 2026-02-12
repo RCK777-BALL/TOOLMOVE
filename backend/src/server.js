@@ -11,6 +11,7 @@ import locationRoutes from "./routes/locations.js";
 import reasonRoutes from "./routes/reasons.js";
 import userRoutes from "./routes/users.js";
 import activityRoutes from "./routes/activity.js";
+import notificationRoutes from "./routes/notifications.js";
 
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -28,6 +29,7 @@ app.use("/locations", locationRoutes);
 app.use("/reasons", reasonRoutes);
 app.use("/users", userRoutes);
 app.use("/activity", activityRoutes);
+app.use("/notifications", notificationRoutes);
 
 app.use((err, _req, res, _next) => {
   console.error(err);

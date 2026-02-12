@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { NavLink, useNavigate, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import {
   Activity as ActivityIcon,
   BadgeCheck,
@@ -11,13 +11,8 @@ import {
   Settings2,
   Users,
 } from 'lucide-react';
-import { ActivityPage } from './ActivityPage';
-import { ToolMovesPage } from './ToolMovesPage';
-import { WeldsPage } from './WeldsPage';
-import { LocationsPage } from './LocationsPage';
-import { ReasonsPage } from './ReasonsPage';
-import { UsersPage } from './UsersPage';
 import type { AppUser } from '../App';
+import { NotificationBell } from '../components/NotificationBell';
 
 interface AppLayoutProps {
   user: AppUser;
@@ -25,12 +20,7 @@ interface AppLayoutProps {
   children: React.ReactNode;
 }
 
-type TabType = 'activity' | 'toolMoves' | 'welds' | 'locations' | 'reasons' | 'users';
-
 export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const isAdmin = user.isAdmin;
@@ -50,26 +40,50 @@ export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 inset-x-0 z-30 bg-white border-b">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="p-2 rounded-md hover:bg-gray-100 text-gray-700"
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <div className="flex items-center gap-2">
+              <BadgeCheck className="h-5 w-5 text-blue-600" />
+              <span className="font-semibold text-gray-900">Tool Move</span>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            <NotificationBell />
+            <span className="text-sm text-gray-700 truncate max-w-[140px]">{user.email}</span>
+          </div>
+        </div>
+      </header>
+
       <div className="flex h-screen overflow-hidden">
         <aside
-          className={`bg-white border-r transition-all duration-200 ease-in-out ${
-            sidebarCollapsed ? 'w-16' : 'w-64'
-          } ${mobileMenuOpen ? 'flex' : 'hidden'} md:flex flex-col fixed md:static inset-y-0 z-30`}
+          className={`bg-white border-r transition-all duration-200 ease-in-out w-50 sm:w-20 md:w-20 lg:w-64 ${
+            mobileMenuOpen ? 'flex' : 'hidden'
+          } md:flex flex-col fixed md:static inset-y-0 z-30`}
         >
           <div className="flex items-center justify-between px-4 py-4 border-b">
             <div className="flex items-center gap-2">
               <BadgeCheck className="h-5 w-5 text-blue-600" />
-              {!sidebarCollapsed && (
-                <span className="font-semibold text-gray-900">Tool Move</span>
-              )}
+              <span className="font-semibold text-gray-900 hidden lg:inline">Tool Move</span>
             </div>
-            <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 text-gray-500 hover:text-gray-700 rounded-md"
-              aria-label={sidebarCollapsed ? 'Expand menu' : 'Collapse menu'}
-            >
-              <Menu className="h-5 w-5" />
-            </button>
+            <div className="flex items-center gap-2">
+              
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 text-gray-500 hover:text-gray-700 rounded-md md:hidden"
+                aria-label="Toggle menu"
+              >
+                <Menu className="h-5 w-5" />
+              </button>
+            </div>
           </div>
 
           <nav className="flex-1 overflow-y-auto py-4">
@@ -78,7 +92,6 @@ export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
                 .filter(item => (item.adminOnly ? isAdmin : true))
                 .map(item => {
                   const Icon = item.icon;
-                  const isActive = location.pathname.startsWith(item.path);
                   return (
                     <NavLink
                       key={item.key}
@@ -93,7 +106,7 @@ export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
                       }
                     >
                       <Icon className="h-5 w-5" />
-                      {!sidebarCollapsed && <span className="truncate">{item.label}</span>}
+                      <span className="truncate inline sm:hidden lg:inline">{item.label}</span>
                     </NavLink>
                   );
                 })}
@@ -101,13 +114,10 @@ export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
           </nav>
 
           <div className="border-t px-4 py-4 flex items-center gap-3">
+            <NotificationBell />
             <div className="flex-1 min-w-0">
-              {!sidebarCollapsed && (
-                <>
-                  <p className="text-sm font-medium text-gray-900 truncate">{user.email}</p>
-                  <p className="text-xs text-gray-500 truncate">{isAdmin ? 'Admin' : 'User'}</p>
-                </>
-              )}
+              <p className="text-sm font-medium text-gray-900 truncate hidden md:block">{user.email}</p>
+              <p className="text-xs text-gray-500 truncate hidden md:block">{isAdmin ? 'Admin' : 'User'}</p>
             </div>
             <button
               onClick={() => {
@@ -130,35 +140,16 @@ export function AppLayout({ user, onSignOut, children }: AppLayoutProps) {
         )}
 
         <div className="flex-1 flex flex-col">
-          {/* <header className="bg-white border-b px-4 md:px-6 py-4 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <button
-                className="md:hidden p-2 rounded-md border text-gray-600"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="Toggle menu"
-              >
-                <Menu className="h-5 w-5" />
-              </button>
-              <div>
-                <p className="text-xs uppercase tracking-wide text-gray-500">Overview</p>
-                <h1 className="text-lg sm:text-xl font-bold text-gray-900">Dashboard</h1>
-              </div>
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="hidden sm:block text-sm text-gray-600 truncate max-w-[200px]">
-                {user.email}
-              </span>
-              <button
-                onClick={handleSignOut}
-                className="flex items-center gap-2 px-3 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
-              >
-                <LogOut className="h-4 w-4" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            </div>
-          </header> */}
-
-          <main className="flex-1 overflow-y-auto px-4 md:px-6 py-6">
+          <div className="md:hidden flex items-center justify-between px-4 py-3 border-b bg-white sticky top-0 z-20">
+          <button onClick={() => setMobileMenuOpen(true)}
+          className="p-2 rounded-md border text-gray-600"
+          aria-label="Open menu">
+          <Menu className="h-5 w-5" />
+          </button>
+          <span className="text-sm text-gray-700 truncate">{user.email}</span>
+          <div className="w-9" />
+          </div>
+          <main className="flex-1 overflow-y-auto px-4 md:px-6 py-6 pt-16 md:pt-6">
             {children}
           </main>
         </div>

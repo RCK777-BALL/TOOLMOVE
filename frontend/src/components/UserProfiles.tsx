@@ -45,18 +45,6 @@ export function UserProfiles({ isAdmin }: UserProfilesProps) {
     }
   };
 
-  const toggleAdminStatus = async (profileId: string, currentStatus: boolean) => {
-    if (!isAdmin) return;
-
-    try {
-      await api.createUser({}); // placeholder to satisfy linter
-      // Admin toggle not implemented in backend yet; surface message
-      setError("Admin toggle not yet supported in Mongo backend");
-    } catch (err: any) {
-      setError(err.message);
-    }
-  };
-
   const deleteProfile = async (profileId: string) => {
     if (!isAdmin) return;
     if (!window.confirm('Are you sure you want to delete this profile?')) return;
@@ -111,18 +99,13 @@ export function UserProfiles({ isAdmin }: UserProfilesProps) {
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{profile.email}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{profile.full_name || '-'}</td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{profile.department || '-'}</td>
-                <td className="px-6 py-4 whitespace-nowrap">
-                  <button
-                    onClick={() => toggleAdminStatus(profile.id, profile.is_admin)}
-                    className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                      profile.is_admin
-                        ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                        : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                    }`}
-                  >
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                    profile.is_admin ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                  }`}>
                     <Shield className="h-4 w-4" />
                     {profile.is_admin ? 'Admin' : 'User'}
-                  </button>
+                  </span>
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                   {new Date(profile.created_at).toLocaleDateString()}
@@ -169,17 +152,14 @@ export function UserProfiles({ isAdmin }: UserProfilesProps) {
             )}
 
             <div className="flex items-center justify-between">
-              <button
-                onClick={() => toggleAdminStatus(profile.id, profile.is_admin)}
-                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium transition-colors ${
-                  profile.is_admin
-                    ? 'bg-blue-100 text-blue-800 hover:bg-blue-200'
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
+              <span
+                className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                  profile.is_admin ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
                 }`}
               >
                 <Shield className="h-4 w-4" />
                 {profile.is_admin ? 'Admin' : 'User'}
-              </button>
+              </span>
               <span className="text-sm text-gray-500">
                 {new Date(profile.created_at).toLocaleDateString()}
               </span>

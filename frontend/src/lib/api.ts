@@ -47,4 +47,7 @@ export const api = {
   getUsers: () => request("/users"),
   createUser: (data: any) => request("/users", { method: "POST", body: JSON.stringify(data) }),
   deleteUser: (id: string) => request(`/users/${id}`, { method: "DELETE" }),
+
+  getNotifications: () => request("/notifications"),
+  markNotificationRead: (id: string) => request(`/notifications/${id}/read`, { method: "POST" }),
 };

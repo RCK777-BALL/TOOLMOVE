@@ -11,11 +11,6 @@ export function UsersPage({ isAdmin }: UsersPageProps) {
   const [refreshKey, setRefreshKey] = useState(0);
   const navigate = useNavigate();
 
-  const handleAdded = () => {
-    setShowAddForm(false);
-    setRefreshKey(prev => prev + 1);
-  };
-
   return (
     <div className="space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-3">

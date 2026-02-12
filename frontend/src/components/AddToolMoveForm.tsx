@@ -14,7 +14,7 @@ export function AddToolMoveForm({ onSuccess, onCancel }: AddToolMoveFormProps) {
   const [lineId, setLineId] = useState('');
   const [stationId, setStationId] = useState('');
   const [notes, setNotes] = useState('');
-  const [movedBy, setMovedBy] = useState(localStorage.getItem('tm_user_email') || '');
+  const [movedBy] = useState(localStorage.getItem('tm_user_email') || '');
   const [requiresWeldTouchup, setRequiresWeldTouchup] = useState(false);
   const [weldTouchupNotes, setWeldTouchupNotes] = useState('');
   const [loading, setLoading] = useState(false);

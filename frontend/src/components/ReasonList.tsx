@@ -65,7 +65,36 @@ export function ReasonList() {
 
   return (
     <div className="bg-white rounded-lg shadow overflow-hidden">
-      <table className="min-w-full divide-y divide-gray-200">
+      {/* Mobile cards */}
+      <div className="sm:hidden divide-y">
+        {reasons.map((reason) => (
+          <div key={reason.id} className="px-4 py-3">
+            <div className="flex justify-between items-start">
+              <div>
+                <p className="text-sm font-semibold text-gray-900">{reason.name}</p>
+                <p className="text-xs text-gray-600 mt-1">{reason.description || '-'}</p>
+                <span className={`inline-flex mt-2 px-2 py-1 text-xs font-semibold rounded-full ${
+                  reason.status === 'active'
+                    ? 'bg-green-100 text-green-800'
+                    : 'bg-gray-100 text-gray-800'
+                }`}>
+                  {reason.status}
+                </span>
+              </div>
+              <button
+                onClick={() => handleDelete(reason.id)}
+                className="text-red-600 hover:text-red-900 ml-4"
+                aria-label="Delete reason"
+              >
+                <Trash2 className="h-5 w-5" />
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop table */}
+      <table className="hidden sm:table min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-50">
           <tr>
             <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">

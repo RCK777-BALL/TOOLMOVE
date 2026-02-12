@@ -16,7 +16,7 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
   const [weldType, setWeldType] = useState('');
   const [reason, setReason] = useState('');
   const [notes, setNotes] = useState('');
-  const [completedBy, setCompletedBy] = useState(localStorage.getItem('tm_user_email') || '');
+  const [completedBy] = useState(localStorage.getItem('tm_user_email') || '');
   const [status, setStatus] = useState('pending');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
