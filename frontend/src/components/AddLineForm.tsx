@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { X } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { api } from '../lib/api';
 
 interface AddLineFormProps {
@@ -63,12 +64,12 @@ export function AddLineForm({ departmentId: propDepartmentId, onSuccess, onCance
     <div className="bg-white p-6 rounded-lg shadow">
       <div className="flex justify-between items-center mb-4">
         <h3 className="text-lg font-semibold text-gray-900">Add New Line</h3>
-        <button
+        <Button
           onClick={onCancel}
           className="text-gray-400 hover:text-gray-600"
         >
           <X className="h-5 w-5" />
-        </button>
+        </Button>
       </div>
 
       {error && (
@@ -145,20 +146,20 @@ export function AddLineForm({ departmentId: propDepartmentId, onSuccess, onCance
         </div>
 
         <div className="flex gap-3">
-          <button
+          <Button
             type="submit"
             disabled={loading}
             className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'Adding...' : 'Add Line'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={onCancel}
             className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
     </div>

@@ -5,6 +5,8 @@ import { Department } from "../models/Department.js";
 import { Line } from "../models/Line.js";
 import { Station } from "../models/Station.js";
 import { auth, requireAdmin } from "../middleware/auth.js";
+import { Notification } from "../models/Notification.js";
+import { User } from "../models/User.js";
 
 const router = express.Router();
 
@@ -22,6 +24,11 @@ router.post("/", auth, async (req, res) => {
   const body = req.body;
   const reason = await Reason.findById(body.reason);
   if (!reason) return res.status(400).json({ message: "Reason not found" });
+  let departmentDoc = null;
+  if (body.department) {
+    departmentDoc = await Department.findById(body.department);
+    if (!departmentDoc) return res.status(400).json({ message: "Department not found" });
+  }
   const doc = await ToolMove.create({
     reason: body.reason,
     department: body.department || null,
@@ -39,6 +46,21 @@ router.post("/", auth, async (req, res) => {
     { path: "line", select: "name" },
     { path: "station", select: "name" },
   ]);
+
+  // Notify users in the same department (if set)
+  if (departmentDoc) {
+    const deptName = departmentDoc.name;
+    const recipients = await User.find({ department: deptName }).select("_id email");
+    if (recipients.length) {
+      await Notification.insertMany(
+        recipients.map((u) => ({
+          user: u._id,
+          message: `New tool move recorded for ${deptName}`,
+        }))
+      );
+    }
+  }
+
   res.status(201).json(populated);
 });
 

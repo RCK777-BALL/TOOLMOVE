@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { X, QrCode } from 'lucide-react';
+import { QrCode } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { QRScanner } from './QRScanner';
 import { api } from '../lib/api';
 
@@ -117,13 +118,7 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
   };
 
   return (
-    <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Add New Weld Touch Up</h3>
-        <button onClick={onCancel} className="text-gray-400 hover:text-gray-600">
-          <X className="h-5 w-5" />
-        </button>
-      </div>
+  <>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
@@ -136,16 +131,33 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex justify-end mb-2">
-          <button
-            type="button"
-            onClick={() => setShowScanner(true)}
-            className="flex items-center gap-2 px-4 py-2 text-sm bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors"
-          >
-            <QrCode className="h-4 w-4" />
-            Scan QR Code
-          </button>
-        </div>
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            {/* <p className="text-xs uppercase tracking-wide text-gray-500">Create</p> */}
+            <h2 className="text-xl sm:text-2xl font-bold text-gray-900">New Weld Touch Up</h2>
+          </div>
+          <div className="flex justify-end mb-2 gap-2">
+            <Button
+              type="button"
+              variant="soft"
+              color="gray"
+              onClick={onCancel}
+              className="text-sm sm:text-base"
+            >
+              Cancel
+            </Button>
+            <Button
+              type="button"
+              onClick={() => setShowScanner(true)}
+              className="flex items-center gap-2 text-sm"
+            >
+              <QrCode className="h-4 w-4" />
+              Scan QR Code
+            </Button>
+          </div>
+        
+      </div>
+
 
         <div>
           <label htmlFor="partNumber" className="block text-sm font-medium text-gray-700 mb-1">
@@ -297,22 +309,24 @@ export function AddWeldForm({ onSuccess, onCancel }: AddWeldFormProps) {
         </div>
 
         <div className="flex flex-col sm:flex-row gap-3">
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
+            className="flex-1 text-sm sm:text-base"
           >
             {loading ? 'Saving...' : 'Save Weld Touch Up'}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="soft"
+            color="gray"
             onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm sm:text-base"
+            className="text-sm sm:text-base"
           >
             Cancel
-          </button>
+          </Button>
         </div>
       </form>
-    </div>
+  </>
   );
 }

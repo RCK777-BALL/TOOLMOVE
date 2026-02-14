@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { api } from '../lib/api';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 interface ToolMove {
   id: string;
@@ -102,16 +104,18 @@ export function ToolMoveList({ refresh }: ToolMoveListProps) {
               <div className="text-sm font-semibold text-gray-900">
                 {move.reasons?.name || '-'}
               </div>
-              <button
+              <Button
                 onClick={(e) => {
                   e.stopPropagation();
                   handleDelete(move.id);
                 }}
                 className="text-red-600 hover:text-red-900"
                 aria-label="Delete"
+                variant="ghost"
+                color="red"
               >
-                <Trash2 className="h-4 w-4" />
-              </button>
+                <Trash2 size={16} />
+              </Button>
             </div>
             <div className="text-xs text-gray-700 mt-1">
               {[move.departments?.name, move.lines?.name, move.stations?.name].filter(Boolean).join(' / ') || '—'}
@@ -176,62 +180,51 @@ export function ToolMoveList({ refresh }: ToolMoveListProps) {
                 {new Date(move.created_at).toLocaleDateString()}
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
+                <Button
                   onClick={() => handleDelete(move.id)}
                   className="text-red-600 hover:text-red-900"
+                  variant="ghost"
+                  color="red"
                 >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                  <Trash2 size={16} />
+                </Button>
               </td>
             </tr>
           ))}
         </tbody>
       </table>
 
-      {selected && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-xl w-full p-6 relative">
-            <button
-              onClick={() => setSelected(null)}
-              className="absolute top-3 right-3 text-gray-400 hover:text-gray-600"
-              aria-label="Close"
-            >
-              ×
-            </button>
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Tool Move Details</h3>
-            <div className="space-y-2 text-sm text-gray-700">
-              <div><span className="font-semibold">Reason:</span> {selected.reasons?.name || '-'}</div>
-              <div>
-                <span className="font-semibold">Location:</span>{' '}
-                {[selected.departments?.name, selected.lines?.name, selected.stations?.name]
-                  .filter(Boolean)
-                  .join(' / ') || '-'}
-              </div>
-              <div><span className="font-semibold">Moved By:</span> {selected.moved_by || '-'}</div>
-              <div><span className="font-semibold">Date:</span> {new Date(selected.created_at).toLocaleString()}</div>
-              <div><span className="font-semibold">Notes:</span> {selected.notes || '-'}</div>
-              <div>
-                <span className="font-semibold">Requires Weld Touch Up:</span>{' '}
-                {selected.requires_weld_touchup ? 'Yes' : 'No'}
-              </div>
-              {selected.requires_weld_touchup && (
+      <Dialog open={!!selected} onOpenChange={(open) => !open && setSelected(null)}>
+        <DialogContent className="max-w-2xl">
+          {selected && (
+            <>
+              <DialogHeader title="Tool Move Details" onClose={() => setSelected(null)} />
+              <div className="p-4 space-y-2 text-sm text-gray-700">
+                <div><span className="font-semibold">Reason:</span> {selected.reasons?.name || '-'}</div>
                 <div>
-                  <span className="font-semibold">Weld Touch Up Notes:</span>{' '}
-                  {selected.weld_touchup_notes || '-'}
+                  <span className="font-semibold">Location:</span>{' '}
+                  {[selected.departments?.name, selected.lines?.name, selected.stations?.name]
+                    .filter(Boolean)
+                    .join(' / ') || '-'}
                 </div>
-              )}
-            </div>
-            <div className="mt-4 flex justify-end">
-              <button
-                onClick={() => setSelected(null)}
-                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-              >
-                Close
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+                <div><span className="font-semibold">Moved By:</span> {selected.moved_by || '-'}</div>
+                <div><span className="font-semibold">Date:</span> {new Date(selected.created_at).toLocaleString()}</div>
+                <div><span className="font-semibold">Notes:</span> {selected.notes || '-'}</div>
+                <div>
+                  <span className="font-semibold">Requires Weld Touch Up:</span>{' '}
+                  {selected.requires_weld_touchup ? 'Yes' : 'No'}
+                </div>
+                {selected.requires_weld_touchup && (
+                  <div>
+                    <span className="font-semibold">Weld Touch Up Notes:</span>{' '}
+                    {selected.weld_touchup_notes || '-'}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

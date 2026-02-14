@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { api } from '../lib/api';
 
 interface Reason {
@@ -81,13 +82,15 @@ export function ReasonList() {
                   {reason.status}
                 </span>
               </div>
-              <button
+              <Button
                 onClick={() => handleDelete(reason.id)}
                 className="text-red-600 hover:text-red-900 ml-4"
                 aria-label="Delete reason"
+                variant="ghost"
+                color="red"
               >
-                <Trash2 className="h-5 w-5" />
-              </button>
+                <Trash2 size={16} />
+              </Button>
             </div>
           </div>
         ))}
@@ -130,12 +133,14 @@ export function ReasonList() {
                 </span>
               </td>
               <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
+                <Button
                   onClick={() => handleDelete(reason.id)}
                   className="text-red-600 hover:text-red-900 ml-4"
+                  variant="ghost"
+                  color="red"
                 >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                  <Trash2 size={16} />
+                </Button>
               </td>
             </tr>
           ))}

@@ -12,6 +12,7 @@ import { UsersPage } from './pages/UsersPage';
 import { ToolMoveAddPage } from './pages/ToolMoveAddPage';
 import { WeldAddPage } from './pages/WeldAddPage';
 import { UsersAddPage } from './pages/UsersAddPage';
+import { UserEditPage } from './pages/UserEditPage';
 
 export interface AppUser {
   id: string;
@@ -66,6 +67,7 @@ function App() {
         <Route path="/reasons" element={user.isAdmin ? <ReasonsPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="/users" element={user.isAdmin ? <UsersPage isAdmin /> : <Navigate to="/dashboard" replace />} />
         <Route path="/users/add" element={user.isAdmin ? <UsersAddPage /> : <Navigate to="/dashboard" replace />} />
+        <Route path="/users/:id" element={user.isAdmin ? <UserEditPage /> : <Navigate to="/dashboard" replace />} />
         <Route path="*" element={<Navigate to="/dashboard" replace />} />
       </Routes>
     </AppLayout>

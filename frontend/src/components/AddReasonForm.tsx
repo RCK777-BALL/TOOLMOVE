@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { X } from 'lucide-react';
+import { Button, Flex, Select, Text, TextArea, TextField, Heading } from '@radix-ui/themes';
 import { api } from '../lib/api';
 
 interface AddReasonFormProps {
@@ -31,15 +32,12 @@ export function AddReasonForm({ onSuccess, onCancel }: AddReasonFormProps) {
 
   return (
     <div className="bg-white p-4 sm:p-6 rounded-lg shadow">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-base sm:text-lg font-semibold text-gray-900">Add New Reason</h3>
-        <button
-          onClick={onCancel}
-          className="text-gray-400 hover:text-gray-600"
-        >
-          <X className="h-5 w-5" />
-        </button>
-      </div>
+      <Flex justify="between" align="center" mb="3">
+        <Heading size="4">Add New Reason</Heading>
+        <Button variant="ghost" color="gray" onClick={onCancel} size="1" aria-label="Close">
+          <X className="h-4 w-4" />
+        </Button>
+      </Flex>
 
       {error && (
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4 text-sm">
@@ -48,66 +46,47 @@ export function AddReasonForm({ onSuccess, onCancel }: AddReasonFormProps) {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-            Reason Name
-          </label>
-          <input
+        <div className="space-y-1">
+          <Text as="label" htmlFor="name" size="2" weight="medium">Reason Name</Text>
+          <TextField.Root
             id="name"
-            type="text"
             value={name}
-            onChange={(e) => setName(e.target.value)}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setName(e.target.value)}
             required
-            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             placeholder="e.g., gap, part, fitup"
           />
         </div>
 
-        <div>
-          <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-1">
-            Description
-          </label>
-          <textarea
+        <div className="space-y-1">
+          <Text as="label" htmlFor="description" size="2" weight="medium">Description</Text>
+          <TextArea
             id="description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setDescription(e.target.value)}
             placeholder="Brief description of this reason"
             rows={3}
           />
         </div>
 
-        <div>
-          <label htmlFor="status" className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <select
-            id="status"
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
+        <div className="space-y-1">
+          <Text as="label" htmlFor="status" size="2" weight="medium">Status</Text>
+          <Select.Root value={status} onValueChange={setStatus}>
+            <Select.Trigger />
+            <Select.Content>
+              <Select.Item value="active">Active</Select.Item>
+              <Select.Item value="inactive">Inactive</Select.Item>
+            </Select.Content>
+          </Select.Root>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            type="submit"
-            disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
-          >
+        <Flex gap="3" direction={{ initial: 'column', sm: 'row' }}>
+          <Button type="submit" disabled={loading} className="flex-1">
             {loading ? 'Adding...' : 'Add Reason'}
-          </button>
-          <button
-            type="button"
-            onClick={onCancel}
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors text-sm sm:text-base"
-          >
+          </Button>
+          <Button type="button" variant="soft" color="gray" onClick={onCancel}>
             Cancel
-          </button>
-        </div>
+          </Button>
+        </Flex>
       </form>
     </div>
   );

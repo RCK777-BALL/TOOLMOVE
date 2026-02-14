@@ -45,7 +45,9 @@ export const api = {
   deleteReason: (id: string) => request(`/reasons/${id}`, { method: "DELETE" }),
 
   getUsers: () => request("/users"),
+  getUser: (id: string) => request(`/users/${id}`),
   createUser: (data: any) => request("/users", { method: "POST", body: JSON.stringify(data) }),
+  updateUser: (id: string, data: any) => request(`/users/${id}`, { method: "PATCH", body: JSON.stringify(data) }),
   deleteUser: (id: string) => request(`/users/${id}`, { method: "DELETE" }),
 
   getNotifications: () => request("/notifications"),

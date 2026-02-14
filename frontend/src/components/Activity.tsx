@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Wrench, ArrowUpDown, Filter } from 'lucide-react';
 import { ActivityDetailsModal } from './ActivityDetailsModal';
 import { api } from '../lib/api';
+import { Button, Flex, ScrollArea, Table } from '@radix-ui/themes';
 
 interface ActivityItem {
   id: string;
@@ -251,13 +252,13 @@ export function Activity({ refresh }: ActivityProps) {
         </div>
 
         <div className="mt-3 flex items-center justify-between">
-          <button
+          <Button
             onClick={() => setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc')}
             className="flex items-center gap-2 px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
           >
             <ArrowUpDown className="h-4 w-4" />
             <span>{sortOrder === 'asc' ? 'Ascending' : 'Descending'}</span>
-          </button>
+          </Button>
 
           <div className="text-sm text-gray-600">
             Showing {filteredActivities.length} of {activities.length} activities
@@ -268,7 +269,7 @@ export function Activity({ refresh }: ActivityProps) {
       {filteredActivities.length === 0 ? (
         <div className="text-center py-12 bg-white rounded-lg shadow">
           <p className="text-gray-600">No activities match the selected filters.</p>
-          <button
+          <Button
             onClick={() => {
               setFilterType('all');
               setFilterDepartment('all');
@@ -277,10 +278,10 @@ export function Activity({ refresh }: ActivityProps) {
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
           >
             Clear Filters
-          </button>
+          </Button>
         </div>
       ) : (
-        <div className="bg-white rounded-lg shadow overflow-hidden">
+        <div className="bg-white rounded-lg shadow">
           {/* Mobile cards */}
           <div className="sm:hidden divide-y">
             {filteredActivities.map((activity) => (
@@ -320,10 +321,10 @@ export function Activity({ refresh }: ActivityProps) {
           </div>
 
           {/* Desktop table */}
-          <table className="hidden sm:table min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+          <Table.Root className="hidden sm:table min-w-full divide-y divide-gray-200">
+            <Table.Header className="bg-gray-50">
               <tr>
-                <th
+                <Table.ColumnHeaderCell
                   onClick={() => toggleSort('type')}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -331,8 +332,8 @@ export function Activity({ refresh }: ActivityProps) {
                     Type
                     {sortBy === 'type' && <ArrowUpDown className="h-3 w-3" />}
                   </div>
-                </th>
-                <th
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell
                   onClick={() => toggleSort('department')}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -340,8 +341,8 @@ export function Activity({ refresh }: ActivityProps) {
                     Department
                     {sortBy === 'department' && <ArrowUpDown className="h-3 w-3" />}
                   </div>
-                </th>
-                <th
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell
                   onClick={() => toggleSort('line')}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -349,11 +350,11 @@ export function Activity({ refresh }: ActivityProps) {
                     Line
                     {sortBy === 'line' && <ArrowUpDown className="h-3 w-3" />}
                   </div>
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Station
-                </th>
-                <th
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell
                   onClick={() => toggleSort('description')}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -361,11 +362,11 @@ export function Activity({ refresh }: ActivityProps) {
                     Description
                     {sortBy === 'description' && <ArrowUpDown className="h-3 w-3" />}
                   </div>
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Performed By
-                </th>
-                <th
+                </Table.ColumnHeaderCell>
+                <Table.ColumnHeaderCell
                   onClick={() => toggleSort('date')}
                   className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100 transition-colors"
                 >
@@ -373,17 +374,17 @@ export function Activity({ refresh }: ActivityProps) {
                     Date
                     {sortBy === 'date' && <ArrowUpDown className="h-3 w-3" />}
                   </div>
-                </th>
+                </Table.ColumnHeaderCell>
               </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
+            </Table.Header>
+            <Table.Body className="bg-white divide-y divide-gray-200">
               {filteredActivities.map((activity) => (
                 <tr
                   key={`${activity.type}-${activity.id}`}
                   onClick={() => fetchActivityDetails(activity)}
                   className="hover:bg-gray-50 cursor-pointer transition-colors"
                 >
-                  <td className="px-6 py-4 whitespace-nowrap text-sm">
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="flex items-center gap-2">
                       {activity.type === 'tool_move' ? (
                         <>
@@ -397,34 +398,36 @@ export function Activity({ refresh }: ActivityProps) {
                         </>
                       )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {activity.departmentName || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {activity.lineName || '-'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                     {activity.stationName || '-'}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 text-sm text-gray-900">
                     <div className="max-w-md">
                       <div>{activity.description}</div>
                       {activity.notes && (
                         <div className="text-xs text-gray-500 mt-1">Note: {activity.notes}</div>
                       )}
                     </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {activity.performedBy}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                  </Table.Cell>
+                  <Table.Cell className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                     {new Date(activity.date).toLocaleString()}
-                  </td>
+                  </Table.Cell>
                 </tr>
               ))}
-            </tbody>
-          </table>
+            </Table.Body>
+          </Table.Root>
+
+
         </div>
       )}
 

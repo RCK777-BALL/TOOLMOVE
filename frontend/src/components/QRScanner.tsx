@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { X, Camera } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 
 interface QRScannerProps {
   onScan: (data: {
@@ -88,12 +89,12 @@ export function QRScanner({ onScan, onClose }: QRScannerProps) {
             <Camera className="h-5 w-5 text-blue-600" />
             <h3 className="text-lg font-semibold text-gray-900">Scan QR Code</h3>
           </div>
-          <button
+          <Button
             onClick={handleClose}
             className="text-gray-400 hover:text-gray-600"
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
         </div>
 
         {error && (
@@ -110,12 +111,12 @@ export function QRScanner({ onScan, onClose }: QRScannerProps) {
           Position the QR code within the frame to scan
         </p>
 
-        <button
+        <Button
           onClick={handleClose}
           className="w-full px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 transition-colors"
         >
           Cancel
-        </button>
+        </Button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Building2, GitBranch, MapPin, Plus, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { AddDepartmentForm } from './AddDepartmentForm';
 import { AddLineForm } from './AddLineForm';
 import { AddStationForm } from './AddStationForm';
@@ -133,13 +134,13 @@ export function Locations({ refresh }: LocationsProps) {
   return (
     <div className="space-y-4">
       {/* <div className="flex justify-between items-center">
-        <button
+        <Button
           onClick={() => setShowAddDepartment(!showAddDepartment)}
           className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
         >
           <Plus className="h-5 w-5" />
           Add Department
-        </button>
+        </Button>
       </div> */}
 
       {showAddDepartment && (
@@ -159,16 +160,17 @@ export function Locations({ refresh }: LocationsProps) {
             <div key={dept.id} className="bg-white rounded-lg shadow overflow-hidden">
               <div className="flex items-center justify-between p-4 hover:bg-gray-50">
                 <div className="flex items-center gap-3 flex-1">
-                  <button
+                  <Button
                     onClick={() => toggleDepartment(dept.id)}
                     className="text-gray-500 hover:text-gray-700"
+                    variant="ghost"
                   >
                     {expandedDepartments.has(dept.id) ? (
                       <ChevronDown className="h-5 w-5" />
                     ) : (
                       <ChevronRight className="h-5 w-5" />
                     )}
-                  </button>
+                  </Button>
                   <Building2 className="h-5 w-5 text-blue-600" />
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900">{dept.name}</h3>
@@ -181,20 +183,23 @@ export function Locations({ refresh }: LocationsProps) {
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <button
+                  <Button
                     onClick={() => setShowAddLine(showAddLine === dept.id ? null : dept.id)}
                     className="p-2 text-green-600 hover:bg-green-50 rounded-md transition-colors"
                     title="Add line"
+                    variant="ghost"
                   >
                     <Plus className="h-4 w-4" />
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     onClick={() => handleDelete('department', dept.id)}
                     className="p-2 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                     title="Delete department"
+                    variant="ghost"
+                    color='red'
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </button>
+                    <Trash2 size={16} />
+                  </Button>
                 </div>
               </div>
 
@@ -220,16 +225,17 @@ export function Locations({ refresh }: LocationsProps) {
                         <div key={line.id} className="bg-white rounded-md shadow-sm">
                           <div className="flex items-center justify-between p-3 hover:bg-gray-50">
                             <div className="flex items-center gap-3 flex-1">
-                              <button
+                              <Button
                                 onClick={() => toggleLine(line.id)}
                                 className="text-gray-500 hover:text-gray-700"
+                                variant="ghost"
                               >
                                 {expandedLines.has(line.id) ? (
                                   <ChevronDown className="h-4 w-4" />
                                 ) : (
                                   <ChevronRight className="h-4 w-4" />
                                 )}
-                              </button>
+                              </Button>
                               <GitBranch className="h-4 w-4 text-green-600" />
                               <div className="flex-1">
                                 <h4 className="font-medium text-gray-900 text-sm">{line.name}</h4>
@@ -242,20 +248,23 @@ export function Locations({ refresh }: LocationsProps) {
                               </div>
                             </div>
                             <div className="flex items-center gap-2">
-                              <button
+                              <Button
                                 onClick={() => setShowAddStation(showAddStation === line.id ? null : line.id)}
                                 className="p-1.5 text-green-600 hover:bg-green-50 rounded-md transition-colors"
                                 title="Add station"
+                                variant="ghost"
                               >
                                 <Plus className="h-3.5 w-3.5" />
-                              </button>
-                              <button
+                              </Button>
+                              <Button
                                 onClick={() => handleDelete('line', line.id)}
                                 className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                 title="Delete line"
+                                variant="ghost"
+                                color='red'
                               >
-                                <Trash2 className="h-3.5 w-3.5" />
-                              </button>
+                                <Trash2 size={16} />
+                              </Button>
                             </div>
                           </div>
 
@@ -291,13 +300,15 @@ export function Locations({ refresh }: LocationsProps) {
                                           )}
                                         </div>
                                       </div>
-                                      <button
+                                      <Button
                                         onClick={() => handleDelete('station', station.id)}
                                         className="p-1.5 text-red-600 hover:bg-red-50 rounded-md transition-colors"
                                         title="Delete station"
+                                        variant="ghost"
+                                         color='red'
                                       >
-                                        <Trash2 className="h-3.5 w-3.5" />
-                                      </button>
+                                        <Trash2 size={16} />
+                                      </Button>
                                     </div>
                                   ))}
                                 </div>

@@ -9,6 +9,9 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@radix-ui/react-dialog": "^1.0.5",
+    "@radix-ui/react-select": "^2.0.0",
+    "@radix-ui/themes": "^3.0.5",
     "bcrypt": "^6.0.0",
     "bcryptjs": "^3.0.3",
     "html5-qrcode": "^2.3.8",

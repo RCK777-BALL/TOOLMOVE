@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Trash2 } from 'lucide-react';
 import { api } from '../lib/api';
+import { Button } from '@radix-ui/themes';
 
 interface Line {
   id: string;
@@ -113,13 +114,15 @@ export function LineList() {
                   {line.status}
                 </span>
               </td>
-              <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                <button
+              <td>
+                <Button
                   onClick={() => handleDelete(line.id)}
-                  className="text-red-600 hover:text-red-900 ml-4"
+                  variant="ghost"
+                  color="red"
+                  className="ml-4 text-red-600 hover:text-red-900"
                 >
-                  <Trash2 className="h-4 w-4" />
-                </button>
+                  <Trash2 size={16} />
+                </Button>
               </td>
             </tr>
           ))}

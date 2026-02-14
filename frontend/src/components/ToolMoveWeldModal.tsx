@@ -1,4 +1,4 @@
-import { X } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader } from './ui/dialog';
 
 interface ToolMoveWeldModalProps {
   toolMove: any;
@@ -10,19 +10,9 @@ export function ToolMoveWeldModal({ toolMove, onClose }: ToolMoveWeldModalProps)
   const isPending = !toolMove.weld_touchup_completed;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center">
-          <h2 className="text-xl font-bold text-gray-900">
-            Tool Move - Weld Touch Up Request
-          </h2>
-          <button
-            onClick={onClose}
-            className="text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            <X className="h-6 w-6" />
-          </button>
-        </div>
+    <Dialog open onOpenChange={(open) => !open && onClose()}>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogHeader title="Tool Move - Weld Touch Up Request" onClose={onClose} />
 
         <div className="p-6 space-y-6">
           <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
@@ -115,16 +105,7 @@ export function ToolMoveWeldModal({ toolMove, onClose }: ToolMoveWeldModalProps)
             </div>
           )}
         </div>
-
-        <div className="px-6 py-4 border-t bg-gray-50 flex justify-end">
-          <button
-            onClick={onClose}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          >
-            Close
-          </button>
-        </div>
-      </div>
-    </div>
+      </DialogContent>
+    </Dialog>
   );
 }

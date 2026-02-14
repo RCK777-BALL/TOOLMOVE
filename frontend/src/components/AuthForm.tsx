@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Wrench } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 import { api } from '../lib/api';
 import type { AppUser } from '../App';
 
@@ -77,14 +78,13 @@ export function AuthForm({ onAuth }: AuthFormProps) {
               className="w-full px-3 py-2 text-sm sm:text-base border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed text-sm sm:text-base font-medium"
+            className="w-full text-sm sm:text-base font-medium"
           >
             {loading ? 'Loading...' : 'Sign In'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

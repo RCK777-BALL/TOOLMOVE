@@ -1,4 +1,5 @@
 import { X, Package, Wrench, MapPin, Calendar, User, FileText } from 'lucide-react';
+import { Button } from '@radix-ui/themes';
 
 interface ToolMoveDetails {
   id: string;
@@ -57,12 +58,12 @@ export function ActivityDetailsModal({ activity, onClose }: ActivityDetailsModal
               </>
             )}
           </div>
-          <button
+          <Button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors"
           >
             <X className="h-6 w-6" />
-          </button>
+          </Button>
         </div>
 
         <div className="p-6 space-y-6">
@@ -225,12 +226,12 @@ export function ActivityDetailsModal({ activity, onClose }: ActivityDetailsModal
         </div>
 
         <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4">
-          <button
+          <Button
             onClick={onClose}
             className="w-full bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors"
           >
             Close
-          </button>
+          </Button>
         </div>
       </div>
     </div>

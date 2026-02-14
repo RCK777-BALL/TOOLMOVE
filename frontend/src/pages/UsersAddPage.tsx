@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { Button } from '@radix-ui/themes';
 import { AddUserForm } from '../components/AddUserForm';
 
 export function UsersAddPage() {
@@ -10,12 +11,12 @@ export function UsersAddPage() {
           <p className="text-xs uppercase tracking-wide text-gray-500">Create</p>
           <h2 className="text-xl sm:text-2xl font-bold text-gray-900">New User</h2>
         </div>
-        <button
+        <Button
           onClick={() => navigate(-1)}
           className="px-3 py-2 text-sm border border-gray-200 rounded-md hover:bg-gray-50"
         >
           Back
-        </button>
+        </Button>
       </div>
       <AddUserForm onSuccess={() => navigate('/users')} onCancel={() => navigate(-1)} />
     </div>
