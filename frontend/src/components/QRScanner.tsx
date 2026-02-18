@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Html5Qrcode } from 'html5-qrcode';
 import { X, Camera } from 'lucide-react';
-import { Button } from '@radix-ui/themes';
+import { Button } from '@radix-ui/themes';0
 
 interface QRScannerProps {
   onScan: (data: {
