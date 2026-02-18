@@ -1,0 +1,12 @@
+import { Schema, model } from "mongoose";
+
+const DepartmentSchema = new Schema(
+  {
+    name: { type: String, required: true, unique: true },
+    description: { type: String },
+    status: { type: String, default: "active" }
+  },
+  { timestamps: true }
+);
+
+export const Department = model("Department", DepartmentSchema);
