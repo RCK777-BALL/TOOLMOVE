@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Package, Wrench, ArrowUpDown, Filter } from 'lucide-react';
 import { ActivityDetailsModal } from './ActivityDetailsModal';
 import { api } from '../lib/api';
-import { Button, Flex, ScrollArea, Table } from '@radix-ui/themes';
+import { Button, Table } from '@radix-ui/themes';
 
 interface ActivityItem {
   id: string;

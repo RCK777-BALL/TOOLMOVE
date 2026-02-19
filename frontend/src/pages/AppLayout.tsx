@@ -10,7 +10,6 @@ import {
   Map,
   Menu,
   Settings2,
-  User2,
   Users,
 } from 'lucide-react';
 import type { AppUser } from '../App';
