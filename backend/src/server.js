@@ -13,6 +13,9 @@ import userRoutes from "./routes/users.js";
 import activityRoutes from "./routes/activity.js";
 import notificationRoutes from "./routes/notifications.js";
 
+import seedRoutes from "./routes/seedRoutes.js";
+
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -30,6 +33,10 @@ app.use("/reasons", reasonRoutes);
 app.use("/users", userRoutes);
 app.use("/activity", activityRoutes);
 app.use("/notifications", notificationRoutes);
+
+
+app.use("/api/seed", seedRoutes);
+
 
 app.use((err, _req, res, _next) => {
   console.error(err);
