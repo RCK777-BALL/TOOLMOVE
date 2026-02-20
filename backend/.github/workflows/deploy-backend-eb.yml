@@ -21,7 +21,7 @@ jobs:
           aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: ${{ secrets.AWS_REGION }}
-          application_name: movetool
-          environment_name: movetool-env
+          application_name: ToolMove
+          environment_name: toolmove-env
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
