@@ -23,6 +23,6 @@ jobs:
           aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           region: ca-central-1
           application_name: ToolMove
-          environment_name: ToolMove-env
+          environment_name: toolmove-env
           version_label: ${{ github.sha }}
           deployment_package: deploy.zip
