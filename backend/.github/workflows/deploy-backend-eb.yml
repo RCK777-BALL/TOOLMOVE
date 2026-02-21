@@ -11,16 +11,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Zip backend
+      - name: Sanity check backend bundle inputs
+        run: |
+          ls -la
+          ls -la backend
+          test -f backend/package.json
+
+      - name: Create deploy zip (backend as root)
         run: |
           cd backend
-          zip -r ../deploy.zip . \
-            -x "node_modules/*" \
-            -x ".git/*" \
-            -x ".gitignore" \
-            -x "**/.DS_Store" \
-            -x ".DS_Store"
+          zip -r ../deploy.zip . -x ".git/*" "node_modules/*"
           cd ..
+          echo "---- deploy.zip contents (top) ----"
+          unzip -l deploy.zip | head -n 50
+          echo "---- confirm package.json present ----"
+          unzip -l deploy.zip | grep -E "package.json$"
 
       - name: Deploy to Elastic Beanstalk
         uses: einaregilsson/beanstalk-deploy@v22
